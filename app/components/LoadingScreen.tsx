@@ -1,3 +1,4 @@
+// components/LoadingScreen.tsx
 "use client";
 import React, { useEffect, useState, useRef } from 'react'
 import { motion } from 'framer-motion'
@@ -5,8 +6,11 @@ import { motion } from 'framer-motion'
 const LoadingScreen: React.FC = () => {
   const [progress, setProgress] = useState(0)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    setIsClient(true)
+    
     // Simulación de progreso
     const timer = setInterval(() => {
       setProgress(prev => {
@@ -22,6 +26,8 @@ const LoadingScreen: React.FC = () => {
   }, [])
 
   useEffect(() => {
+    if (!isClient) return;
+    
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -57,7 +63,6 @@ const LoadingScreen: React.FC = () => {
       const centerY = Math.random() * canvas.height
       const radius = Math.random() * 100 + 50
       const angle = Math.random() * Math.PI * 2
-      const speed = (Math.random() * 0.02) + 0.005
       
       particles.push({
         x: centerX + Math.cos(angle) * radius,
@@ -166,7 +171,7 @@ const LoadingScreen: React.FC = () => {
       window.removeEventListener('resize', resizeCanvas)
       clearInterval(waveInterval)
     }
-  }, [])
+  }, [isClient])
 
   return (
     <motion.div
@@ -174,12 +179,18 @@ const LoadingScreen: React.FC = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 bg-black-900 flex items-center justify-center z-50 overflow-hidden"
+      aria-label="Pantalla de carga"
+      role="alert"
+      aria-busy="true"
     >
       {/* Canvas para el fondo animado */}
-      <canvas 
-        ref={canvasRef} 
-        className="absolute inset-0 w-full h-full"
-      />
+      {isClient && (
+        <canvas 
+          ref={canvasRef} 
+          className="absolute inset-0 w-full h-full"
+          aria-hidden="true"
+        />
+      )}
 
       {/* Contenido principal */}
       <div className="text-center relative z-10">
@@ -200,6 +211,7 @@ const LoadingScreen: React.FC = () => {
             }}
             transition={{ duration: 2, repeat: Infinity }}
             className="w-24 h-24 mx-auto bg-gradient-to-br from-gold-500 to-gold-600 rounded-2xl flex items-center justify-center font-display font-bold text-2xl text-black-900 mb-4"
+            aria-hidden="true"
           >
             GR
           </motion.div>
@@ -229,12 +241,17 @@ const LoadingScreen: React.FC = () => {
           animate={{ width: 200, opacity: 1 }}
           transition={{ delay: 0.7, duration: 0.5 }}
           className="relative mx-auto mb-4"
+          role="progressbar"
+          aria-valuenow={progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
         >
           <div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-gradient-to-r from-gold-500 to-gold-400 rounded-full"
               style={{ width: `${progress}%` }}
               transition={{ duration: 0.1 }}
+              aria-hidden="true"
             />
           </div>
         </motion.div>
@@ -245,6 +262,7 @@ const LoadingScreen: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.5 }}
           className="text-sm text-gray-500 font-mono"
+          aria-live="polite"
         >
           {progress}% Cargando experiencia...
         </motion.p>
@@ -255,6 +273,7 @@ const LoadingScreen: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.5 }}
           className="flex justify-center space-x-2 mt-6"
+          aria-hidden="true"
         >
           {[0, 1, 2].map((i) => (
             <motion.div
