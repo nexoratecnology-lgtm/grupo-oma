@@ -6,7 +6,7 @@ import { OrbitControls, PerspectiveCamera, Environment, Text } from '@react-thre
 import { useInView } from 'react-intersection-observer'
 import {Cpu, Code, Database, Cloud, Shield, Zap} from 'lucide-react'
 import * as THREE from 'three'
-
+import Navigation from '../components/Navigation'
 // Componente de fondo con ondas tecnológicas simples
 const SimpleTechWaves: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -375,6 +375,8 @@ const Nexora: React.FC = () => {
   ]
 
   return (
+    <>
+        <Navigation/>
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -588,6 +590,7 @@ const Nexora: React.FC = () => {
         </motion.div>
       </section>
     </motion.div>
+    </>
   )
 }
 

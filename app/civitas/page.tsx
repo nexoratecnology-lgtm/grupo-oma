@@ -6,7 +6,7 @@ import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei
 import { useInView } from 'react-intersection-observer'
 import {Heart, Users, Globe, TreePine, GraduationCap, Home} from 'lucide-react'
 import * as THREE from 'three'
-
+import Navigation from '../components/Navigation'
 // Componente de fondo con ondas sutiles
 const SubtleWavesBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -294,6 +294,8 @@ const CivitasHumanis: React.FC = () => {
   ]
 
   return (
+    <>
+        <Navigation/>
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -538,6 +540,7 @@ const CivitasHumanis: React.FC = () => {
         </motion.div>
       </section>
     </motion.div>
+    </>
   )
 }
 
