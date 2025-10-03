@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react'
-import { Link, useLocation, BrowserRouter as Router } from 'react-router-dom'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { motion, AnimatePresence } from 'framer-motion'
 import {Menu, X, Home} from 'lucide-react'
 
@@ -11,10 +12,10 @@ const navigationItems = [
   { path: '/civitas', label: 'Civitas Humanis', description: 'Proyectos Sociales' },
 ]
 
-const NavigationContent: React.FC = () => {
+const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const location = useLocation()
+  const router = useRouter()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,11 +28,11 @@ const NavigationContent: React.FC = () => {
 
   useEffect(() => {
     setIsOpen(false)
-  }, [location])
+  }, [router.pathname])
 
   const toggleMenu = () => setIsOpen(!isOpen)
 
-  const isHomePage = location.pathname === '/'
+  const isHomePage = router.pathname === '/'
 
   return (
     <>
@@ -49,7 +50,7 @@ const NavigationContent: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3 group">
+            <Link href="/" className="flex items-center space-x-3 group">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -78,13 +79,13 @@ const NavigationContent: React.FC = () => {
             {/* Desktop Menu */}
             <div className="hidden lg:flex items-center space-x-8">
               {navigationItems.map((item) => {
-                const isActive = location.pathname === item.path
+                const isActive = router.pathname === item.path
                 const Icon = item.icon
                 
                 return (
                   <Link
                     key={item.path}
-                    to={item.path}
+                    href={item.path}
                     className="relative group"
                   >
                     <motion.div
@@ -164,7 +165,7 @@ const NavigationContent: React.FC = () => {
               <div className="p-6 pt-20">
                 <nav className="space-y-4">
                   {navigationItems.map((item, index) => {
-                    const isActive = location.pathname === item.path
+                    const isActive = router.pathname === item.path
                     const Icon = item.icon
                     
                     return (
@@ -175,7 +176,7 @@ const NavigationContent: React.FC = () => {
                         transition={{ delay: index * 0.1 }}
                       >
                         <Link
-                          to={item.path}
+                          href={item.path}
                           className={`flex items-center space-x-3 p-4 rounded-xl transition-all duration-300 ${
                             isActive 
                               ? 'bg-gradient-to-r from-yellow-400/30 to-yellow-400/20 text-yellow-400 shadow-yellow-400/30 border-l-4 border-yellow-400' 
@@ -200,15 +201,6 @@ const NavigationContent: React.FC = () => {
         )}
       </AnimatePresence>
     </>
-  )
-}
-
-// Componente Navigation que envuelve el contenido con Router
-const Navigation: React.FC = () => {
-  return (
-    <Router>
-      <NavigationContent />
-    </Router>
   )
 }
 
