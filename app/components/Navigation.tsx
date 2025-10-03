@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, BrowserRouter as Router } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {Menu, X, Home} from 'lucide-react'
 
@@ -11,7 +11,7 @@ const navigationItems = [
   { path: '/civitas', label: 'Civitas Humanis', description: 'Proyectos Sociales' },
 ]
 
-const Navigation: React.FC = () => {
+const NavigationContent: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const location = useLocation()
@@ -31,7 +31,6 @@ const Navigation: React.FC = () => {
 
   const toggleMenu = () => setIsOpen(!isOpen)
 
-  // Verificar si estamos en la página de inicio
   const isHomePage = location.pathname === '/'
 
   return (
@@ -201,6 +200,15 @@ const Navigation: React.FC = () => {
         )}
       </AnimatePresence>
     </>
+  )
+}
+
+// Componente Navigation que envuelve el contenido con Router
+const Navigation: React.FC = () => {
+  return (
+    <Router>
+      <NavigationContent />
+    </Router>
   )
 }
 
