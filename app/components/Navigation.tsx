@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'  // Cambiado a usePathname para Next.js 13+
 import { motion, AnimatePresence } from 'framer-motion'
 import {Menu, X, Home} from 'lucide-react'
 
@@ -15,7 +15,13 @@ const navigationItems = [
 const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+  const pathname = usePathname()
+
+  // Asegurarse de que el componente está montado en el cliente
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,11 +34,14 @@ const Navigation: React.FC = () => {
 
   useEffect(() => {
     setIsOpen(false)
-  }, [router.pathname])
+  }, [pathname])
 
   const toggleMenu = () => setIsOpen(!isOpen)
 
-  const isHomePage = router.pathname === '/'
+  const isHomePage = pathname === '/'
+
+  // Si no está montado, no renderizar nada para evitar errores de hidratación
+  if (!mounted) return null
 
   return (
     <>
@@ -79,7 +88,7 @@ const Navigation: React.FC = () => {
             {/* Desktop Menu */}
             <div className="hidden lg:flex items-center space-x-8">
               {navigationItems.map((item) => {
-                const isActive = router.pathname === item.path
+                const isActive = pathname === item.path
                 const Icon = item.icon
                 
                 return (
@@ -165,7 +174,7 @@ const Navigation: React.FC = () => {
               <div className="p-6 pt-20">
                 <nav className="space-y-4">
                   {navigationItems.map((item, index) => {
-                    const isActive = router.pathname === item.path
+                    const isActive = pathname === item.path
                     const Icon = item.icon
                     
                     return (
