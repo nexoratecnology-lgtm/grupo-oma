@@ -1,3 +1,4 @@
+"use client";
 import React, { Suspense, useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Canvas } from '@react-three/fiber'
