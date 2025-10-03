@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/router'
 import { ArrowRight, Play, Lightbulb, Users } from 'lucide-react'
 import { useInView } from 'react-intersection-observer'
 import { Variants, Easing } from 'framer-motion'
@@ -41,10 +41,13 @@ const businessUnits = [
 const MinimalCorporateBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [isClient, setIsClient] = useState(false);
   const animationRef = useRef<number>(0);
   const timeRef = useRef<number>(0);
 
   useEffect(() => {
+    setIsClient(true);
+    
     const updateDimensions = () => {
       setDimensions({
         width: window.innerWidth,
@@ -62,8 +65,10 @@ const MinimalCorporateBackground: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (!isClient || dimensions.width === 0 || dimensions.height === 0) return;
+    
     const canvas = canvasRef.current;
-    if (!canvas || dimensions.width === 0 || dimensions.height === 0) return;
+    if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -82,7 +87,6 @@ const MinimalCorporateBackground: React.FC = () => {
       speed: number = 0;
 
       constructor() {
-        // Crear líneas en posiciones estratégicas
         const side = Math.floor(Math.random() * 4);
         switch(side) {
           case 0: // Superior
@@ -117,14 +121,12 @@ const MinimalCorporateBackground: React.FC = () => {
       }
 
       update() {
-        // Transición suave de opacidad
         if (this.opacity < this.targetOpacity) {
           this.opacity += this.speed;
         } else if (this.opacity > this.targetOpacity) {
           this.opacity -= this.speed;
         }
         
-        // Cambiar opacidad objetivo ocasionalmente
         if (Math.random() < 0.005) {
           this.targetOpacity = Math.random() * 0.15 + 0.05;
         }
@@ -301,7 +303,7 @@ const MinimalCorporateBackground: React.FC = () => {
     return () => {
       cancelAnimationFrame(animationRef.current);
     };
-  }, [dimensions]);
+  }, [dimensions, isClient]);
 
   return (
     <canvas 
@@ -312,7 +314,7 @@ const MinimalCorporateBackground: React.FC = () => {
 };
 
 const Landing: React.FC = () => {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [heroRef, heroInView] = useInView({ threshold: 0.3, triggerOnce: true })
   const [unitsRef, unitsInView] = useInView({ threshold: 0.2, triggerOnce: true })
 
@@ -337,6 +339,14 @@ const Landing: React.FC = () => {
         ease: "easeOut" as Easing
       }
     }
+  }
+
+  const handleExploreClick = () => {
+    router.push('/vortex')
+  }
+
+  const handleUnitClick = (path: string) => {
+    router.push(path)
   }
 
   return (
@@ -422,7 +432,7 @@ const Landing: React.FC = () => {
             <motion.button
               whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(212, 175, 55, 0.5)" }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => navigate('/vortex')}
+              onClick={handleExploreClick}
               className="px-8 py-4 bg-gold-500 text-black-900 font-semibold rounded-xl hover:bg-gold-400 transition-all duration-300 flex items-center space-x-2 shadow-gold"
             >
               <span>Explorar Nuestro Ecosistema</span>
@@ -489,7 +499,7 @@ const Landing: React.FC = () => {
                   animate={unitsInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.8, delay: index * 0.2 }}
                   whileHover={{ y: -10, scale: 1.02 }}
-                  onClick={() => navigate(unit.path)}
+                  onClick={() => handleUnitClick(unit.path)}
                   className="group cursor-pointer"
                 >
                   <div className="relative p-8 bg-gradient-to-br from-gray-900/50 to-black-800/50 backdrop-blur-glass rounded-2xl border border-gray-700/50 hover:border-gold-500/50 transition-all duration-500 h-full">
