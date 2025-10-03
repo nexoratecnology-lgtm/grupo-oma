@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { useRouter } from 'next/router'
+import { usePathname, useRouter } from 'next/navigation' // Importamos de next/navigation
 import { ArrowRight, Play, Lightbulb, Users } from 'lucide-react'
 import { useInView } from 'react-intersection-observer'
 import { Variants, Easing } from 'framer-motion'
@@ -314,9 +314,19 @@ const MinimalCorporateBackground: React.FC = () => {
 };
 
 const Landing: React.FC = () => {
-  const router = useRouter()
+  const router = useRouter() // Ahora de next/navigation
+  const pathname = usePathname() // Hook para obtener la ruta actual
   const [heroRef, heroInView] = useInView({ threshold: 0.3, triggerOnce: true })
   const [unitsRef, unitsInView] = useInView({ threshold: 0.2, triggerOnce: true })
+  const [mounted, setMounted] = useState(false) // Estado para controlar la hidratación
+
+  // Asegurarse de que el componente está montado en el cliente
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Si no está montado, no renderizar nada para evitar errores de hidratación
+  if (!mounted) return null
 
   const containerVariants = {
     hidden: { opacity: 0 },
