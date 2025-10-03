@@ -31,7 +31,10 @@ function AppContent() {
       '/civitas': 'Civitas Humanis - Proyectos Sociales | Grupo Roma'
     }
     
-    document.title = titles[location.pathname as keyof typeof titles] || titles['/']
+    // Verificar si document está definido antes de usarlo
+    if (typeof document !== 'undefined') {
+      document.title = titles[location.pathname as keyof typeof titles] || titles['/']
+    }
   }, [location])
 
   if (isLoading) {
