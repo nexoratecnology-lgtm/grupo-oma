@@ -5,7 +5,7 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei'
 import { useInView } from 'react-intersection-observer'
 import {Play, Film, Camera, Award, Users, Clock, Share2, MessageSquare, Heart, TrendingUp} from 'lucide-react'
-
+import Navigation from '../components/Navigation'
 // 3D Components
 const FilmReel: React.FC = () => {
   return (
@@ -503,6 +503,8 @@ const VortexStudios: React.FC = () => {
   ]
 
   return (
+    <>
+    <Navigation/>
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -766,6 +768,7 @@ const VortexStudios: React.FC = () => {
         </motion.div>
       </section>
     </motion.div>
+    </>
   )
 }
 
