@@ -1,44 +1,68 @@
+// app/page.tsx
 "use client";
-import React, { useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
-import { AnimatePresence } from 'framer-motion'
-import { Toaster } from 'react-hot-toast'
-import "./app.css"
-// Components
-import Navigation from './components/Navigation'
-import Landing from './components/screens/LandingScreen'
-import VortexStudios from './components/screens/VortexScreen'
-import Nexora from './components/screens/NexoraScreen'
-import CivitasHumanis from './components/screens/CivitasScreen'
-import LoadingScreen from './components/LoadingScreen'
 
-// Hooks
-import { useScrollSmooth } from './hooks/useScrollSmooth'
-import { usePreloader } from './hooks/usePreloader'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
 
-function AppContent() {
-  const location = useLocation()
-  const { isLoading } = usePreloader()
-  
-  useScrollSmooth()
+// Importar dinámicamente los componentes con SSR deshabilitado
+const Navigation = dynamic(() => import('./components/Navigation'), { ssr: false });
+const Landing = dynamic(() => import('./components/screens/LandingScreen'), { ssr: false });
+const LoadingScreen = dynamic(() => import('./components/LoadingScreen'), { ssr: false });
+
+// Hooks personalizados adaptados para Next.js
+function usePreloader() {
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    // Update page title based on route
-    const titles = {
-      '/': 'Grupo Roma - Innovación, Tecnología y Impacto Social',
-      '/vortex': 'Vortex Studios - Producción Audiovisual | Grupo Roma',
-      '/nexora': 'Nexora - Tecnologías Avanzadas | Grupo Roma',
-      '/civitas': 'Civitas Humanis - Proyectos Sociales | Grupo Roma'
+    // Simular carga de recursos
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  return { isLoading };
+}
+
+function useScrollSmooth() {
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Implementación de scroll suave
+      const handleAnchorClick = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'A' && target.getAttribute('href')?.startsWith('#')) {
+          e.preventDefault();
+          const id = target.getAttribute('href')?.substring(1);
+          const element = document.getElementById(id || '');
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      };
+
+      document.addEventListener('click', handleAnchorClick);
+      return () => document.removeEventListener('click', handleAnchorClick);
     }
-    
-    // Verificar si document está definido antes de usarlo
+  }, []);
+}
+
+export default function Home() {
+  const { isLoading } = usePreloader();
+  useScrollSmooth();
+
+  // Actualizar título de página
+  useEffect(() => {
     if (typeof document !== 'undefined') {
-      document.title = titles[location.pathname as keyof typeof titles] || titles['/']
+      document.title = 'Grupo Roma - Innovación, Tecnología y Impacto Social';
     }
-  }, [location])
+  }, []);
 
   if (isLoading) {
-    return <LoadingScreen />
+    return <LoadingScreen />;
   }
 
   return (
@@ -46,45 +70,17 @@ function AppContent() {
       <Navigation />
       
       <main className="relative">
-        <AnimatePresence mode="wait" initial={false}>
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Landing />} />
-            <Route path="/vortex" element={<VortexStudios />} />
-            <Route path="/nexora" element={<Nexora />} />
-            <Route path="/civitas" element={<CivitasHumanis />} />
-          </Routes>
+        <AnimatePresence mode="wait">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Landing />
+          </motion.div>
         </AnimatePresence>
       </main>
-
-      {/* Toast notifications */}
-      <Toaster
-        position="bottom-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: '#1a1a1a',
-            color: '#ffffff',
-            border: '1px solid #D4AF37',
-            borderRadius: '8px',
-          },
-          success: {
-            iconTheme: {
-              primary: '#D4AF37',
-              secondary: '#0B0B0B',
-            },
-          },
-        }}
-      />
     </div>
-  )
+  );
 }
-
-function App() {
-  return (
-    <Router>
-      <AppContent />
-    </Router>
-  )
-}
-
-export default App
