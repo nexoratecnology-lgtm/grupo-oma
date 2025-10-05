@@ -2,7 +2,7 @@
 "use client";
 import React, { useEffect, useState, useRef } from 'react'
 import { motion } from 'framer-motion'
-
+import logoicon from "../img/logonombre.png"
 const LoadingScreen: React.FC = () => {
   const [progress, setProgress] = useState(0)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -201,20 +201,14 @@ const LoadingScreen: React.FC = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="mb-8"
         >
-          <motion.div
-            animate={{ 
-              boxShadow: [
-                "0 0 20px rgba(212, 175, 55, 0.3)",
-                "0 0 40px rgba(212, 175, 55, 0.6)",
-                "0 0 20px rgba(212, 175, 55, 0.3)"
-              ]
-            }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="w-24 h-24 mx-auto bg-gradient-to-br from-gold-500 to-gold-600 rounded-2xl flex items-center justify-center font-display font-bold text-2xl text-black-900 mb-4"
-            aria-hidden="true"
-          >
-            GR
-          </motion.div>
+<motion.div
+  
+  transition={{ duration: 3, repeat: Infinity }}
+  className="w-24 h-24 mx-auto rounded-2xl flex items-center justify-center font-display font-bold text-2xl mb-4"
+  aria-hidden="true"
+>
+  <img src={logoicon.src} alt="" />
+</motion.div>
           
           <motion.h1
             initial={{ y: 20, opacity: 0 }}

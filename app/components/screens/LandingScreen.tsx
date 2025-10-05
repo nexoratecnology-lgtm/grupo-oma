@@ -4,7 +4,7 @@ import { usePathname, useRouter } from 'next/navigation' // Importamos de next/n
 import { ArrowRight, Play, Lightbulb, Users } from 'lucide-react'
 import { useInView } from 'react-intersection-observer'
 import { Variants, Easing } from 'framer-motion'
-
+import logomarca from "../../img/logomarca.png"
 const businessUnits = [
   {
     id: 'vortex',
@@ -406,25 +406,20 @@ const Landing: React.FC = () => {
               transition={{ duration: 1, ease: "easeOut" }}
               className="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-gold-500 to-gold-600 rounded-3xl flex items-center justify-center font-display font-bold text-4xl text-black-900 shadow-gold-lg"
             >
-              GR
+              <img src={logomarca.src} alt="" />
             </motion.div>
           </motion.div>
 
-          <motion.h1
-            variants={itemVariants}
-            className="text-hero font-display font-bold text-gradient-gold mb-6 leading-tight"
-          >
-            Grupo Roma
-          </motion.h1>
+     
 
           <motion.p
             variants={itemVariants}
             className="text-xl md:text-2xl text-gray-300 mb-4 max-w-4xl mx-auto leading-relaxed"
           >
             Tres visiones, un propósito: transformar el mundo a través de la{' '}
-            <span className="text-gold-500 font-semibold">innovación</span>,{' '}
-            <span className="text-gold-500 font-semibold">tecnología</span> y{' '}
-            <span className="text-gold-500 font-semibold">impacto social</span>
+       <span className="text-yellow-400 font-semibold">innovación</span>,{' '}
+<span className="text-yellow-400 font-semibold">tecnología</span> y{' '}
+<span className="text-yellow-400 font-semibold">impacto social</span>
           </motion.p>
 
           <motion.p
@@ -449,13 +444,7 @@ const Landing: React.FC = () => {
               <ArrowRight size={20} />
             </motion.button>
 
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 border-2 border-gold-500 text-gold-500 font-semibold rounded-xl hover:bg-gold-500/10 transition-all duration-300"
-            >
-              Ver Showreel
-            </motion.button>
+         
           </motion.div>
         </motion.div>
 
@@ -512,8 +501,7 @@ const Landing: React.FC = () => {
                   onClick={() => handleUnitClick(unit.path)}
                   className="group cursor-pointer"
                 >
-                  <div className="relative p-8 bg-gradient-to-br from-gray-900/50 to-black-800/50 backdrop-blur-glass rounded-2xl border border-gray-700/50 hover:border-gold-500/50 transition-all duration-500 h-full">
-                    {/* Icon */}
+                <div className="relative p-8 bg-gradient-to-br from-black via-gray-900 to-black backdrop-blur-lg rounded-2xl border border-gray-800/50 hover:border-gold-500/50 transition-all duration-500 h-full shadow-2xl shadow-black/50 hover:shadow-gold-500/10">    {/* Icon */}
                     <div className={`w-16 h-16 bg-gradient-to-br ${unit.color} rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
                       <Icon size={28} className="text-white" />
                     </div>

@@ -6,35 +6,9 @@ import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei
 import { useInView } from 'react-intersection-observer'
 import {Play, Film, Camera, Award, Users, Clock, Share2, MessageSquare, Heart, TrendingUp} from 'lucide-react'
 import Navigation from '../components/Navigation'
-// 3D Components
-const FilmReel: React.FC = () => {
-  return (
-    <group>
-      {/* Film Reel */}
-      <mesh position={[0, 0, 0]}>
-        <cylinderGeometry args={[2, 2, 0.3, 32]} />
-        <meshStandardMaterial color="#D4AF37" metalness={0.8} roughness={0.2} />
-      </mesh>
-      
-      {/* Center Hub */}
-      <mesh position={[0, 0, 0]}>
-        <cylinderGeometry args={[0.5, 0.5, 0.4, 16]} />
-        <meshStandardMaterial color="#0B0B0B" />
-      </mesh>
-      
-      {/* Film Strip */}
-      {Array.from({ length: 8 }).map((_, i) => (
-        <mesh key={i} position={[Math.cos(i * Math.PI / 4) * 1.5, 0, Math.sin(i * Math.PI / 4) * 1.5]} rotation={[0, i * Math.PI / 4, 0]}>
-          <boxGeometry args={[0.1, 0.2, 0.05]} />
-          <meshStandardMaterial color="#333" />
-        </mesh>
-      ))}
-    </group>
-  )
-}
 
-// Componente de fondo animado con redes sociales y producción
-const SocialProductionBackground: React.FC = () => {
+// Componente de fondo con ondas sutiles adaptadas para tema de producción audiovisual
+const SubtleWavesBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const animationRef = useRef<number>(0);
@@ -67,321 +41,64 @@ const SocialProductionBackground: React.FC = () => {
     canvas.width = dimensions.width;
     canvas.height = dimensions.height;
 
-    // Clase para representar un nodo de red social
-    class SocialNode {
+    // Clase para representar una onda sutil
+    class SubtleWave {
       x: number;
       y: number;
-      size: number;
-      targetX: number;
-      targetY: number;
+      amplitude: number;
+      frequency: number;
       speed: number;
-      type: 'user' | 'content' | 'reaction';
-      connections: number[];
-      pulse: number;
-      pulseSpeed: number;
       color: string;
-      rotation: number;
-      rotationSpeed: number;
-
-      constructor(width: number, height: number) {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.size = Math.random() * 8 + 6;
-        this.targetX = Math.random() * width;
-        this.targetY = Math.random() * height;
-        this.speed = Math.random() * 0.02 + 0.01;
-        
-        const types: ('user' | 'content' | 'reaction')[] = ['user', 'content', 'reaction'];
-        this.type = types[Math.floor(Math.random() * types.length)];
-        
-        this.connections = [];
-        this.pulse = Math.random() * Math.PI * 2;
-        this.pulseSpeed = Math.random() * 0.05 + 0.02;
-        this.rotation = Math.random() * Math.PI * 2;
-        this.rotationSpeed = (Math.random() - 0.5) * 0.02;
-        
-        // Colores según el tipo
-        switch(this.type) {
-          case 'user':
-            this.color = 'rgba(139, 92, 246, '; // purple
-            break;
-          case 'content':
-            this.color = 'rgba(236, 72, 153, '; // pink
-            break;
-          case 'reaction':
-            this.color = 'rgba(212, 175, 55, '; // gold
-            break;
-        }
-      }
-
-      update(width: number, height: number) {
-        // Mover hacia el objetivo
-        this.x += (this.targetX - this.x) * this.speed;
-        this.y += (this.targetY - this.y) * this.speed;
-        
-        // Si llegamos al objetivo, establecer uno nuevo
-        if (Math.abs(this.x - this.targetX) < 5 && Math.abs(this.y - this.targetY) < 5) {
-          this.targetX = Math.random() * width;
-          this.targetY = Math.random() * height;
-        }
-        
-        // Actualizar pulso
-        this.pulse += this.pulseSpeed;
-        this.rotation += this.rotationSpeed;
-      }
-
-      draw(ctx: CanvasRenderingContext2D) {
-        const pulseSize = this.size + Math.sin(this.pulse) * 1.5;
-        const opacity = 0.3 + Math.sin(this.pulse) * 0.2;
-        
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.rotation);
-        
-        // Dibujar forma geométrica según el tipo
-        ctx.fillStyle = this.color + opacity + ')';
-        ctx.strokeStyle = this.color + (opacity * 1.5) + ')';
-        ctx.lineWidth = 1;
-        
-        switch(this.type) {
-          case 'user':
-            // Círculo para usuarios
-            ctx.beginPath();
-            ctx.arc(0, 0, pulseSize / 2, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-            break;
-            
-          case 'content':
-            // Cuadrado para contenido
-            const squareSize = pulseSize * 0.8;
-            ctx.fillRect(-squareSize / 2, -squareSize / 2, squareSize, squareSize);
-            ctx.strokeRect(-squareSize / 2, -squareSize / 2, squareSize, squareSize);
-            break;
-            
-          case 'reaction':
-            // Triángulo para reacciones
-            ctx.beginPath();
-            ctx.moveTo(0, -pulseSize / 2);
-            ctx.lineTo(-pulseSize / 2, pulseSize / 2);
-            ctx.lineTo(pulseSize / 2, pulseSize / 2);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-            break;
-        }
-        
-        ctx.restore();
-      }
-    }
-
-    // Clase para representar una conexión entre nodos
-    class Connection {
-      nodeA: SocialNode;
-      nodeB: SocialNode;
-      strength: number;
-      active: boolean;
-      flow: number;
-      flowSpeed: number;
-
-      constructor(nodeA: SocialNode, nodeB: SocialNode) {
-        this.nodeA = nodeA;
-        this.nodeB = nodeB;
-        this.strength = Math.random() * 0.3 + 0.1;
-        this.active = Math.random() > 0.3;
-        this.flow = 0;
-        this.flowSpeed = Math.random() * 0.02 + 0.01;
-      }
-
-      update() {
-        // Actualizar flujo de datos
-        this.flow += this.flowSpeed;
-        if (this.flow > 1) this.flow = 0;
-        
-        // Activar/desactivar conexión aleatoriamente
-        if (Math.random() < 0.005) {
-          this.active = !this.active;
-        }
-      }
-
-      draw(ctx: CanvasRenderingContext2D) {
-        if (!this.active) return;
-        
-        // Calcular distancia entre nodos
-        const dx = this.nodeB.x - this.nodeA.x;
-        const dy = this.nodeB.y - this.nodeA.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        // Solo dibujar si los nodos están cerca
-        if (distance > 200) return;
-        
-        // Opacidad basada en distancia
-        const opacity = (1 - distance / 200) * this.strength;
-        
-        // Dibujar línea de conexión
-        ctx.beginPath();
-        ctx.moveTo(this.nodeA.x, this.nodeA.y);
-        ctx.lineTo(this.nodeB.x, this.nodeB.y);
-        ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.3})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        
-        // Dibujar flujo de datos
-        const flowX = this.nodeA.x + dx * this.flow;
-        const flowY = this.nodeA.y + dy * this.flow;
-        
-        ctx.beginPath();
-        ctx.arc(flowX, flowY, 2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(212, 175, 55, ${opacity})`;
-        ctx.fill();
-      }
-    }
-
-    // Clase para representar una onda de contenido
-    class ContentWave {
-      x: number;
-      y: number;
-      radius: number;
-      maxRadius: number;
-      speed: number;
       opacity: number;
-      color: string;
+      offset: number;
 
       constructor(width: number, height: number) {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.radius = 0;
-        this.maxRadius = Math.random() * 100 + 50;
-        this.speed = Math.random() * 2 + 1;
-        this.opacity = Math.random() * 0.3 + 0.1;
-        this.color = 'rgba(236, 72, 153, '; // pink
-      }
-
-      update() {
-        this.radius += this.speed;
-        this.opacity -= 0.002;
-      }
-
-      draw(ctx: CanvasRenderingContext2D) {
-        if (this.opacity <= 0 || this.radius > this.maxRadius) return;
+        this.amplitude = Math.random() * 30 + 10;
+        this.frequency = Math.random() * 0.01 + 0.005;
+        this.speed = Math.random() * 0.5 + 0.2;
+        this.offset = Math.random() * Math.PI * 2;
         
+        // Colores suaves para el tema de producción audiovisual
+        const colors = [
+          'rgba(139, 92, 246, ',  // Púrpura suave
+          'rgba(236, 72, 153, ',  // Rosa suave
+          'rgba(212, 175, 55, ', // Dorado suave
+        ];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.opacity = Math.random() * 0.1 + 0.05;
+      }
+
+      update(time: number) {
+        this.offset += this.speed * 0.01;
+      }
+
+      draw(ctx: CanvasRenderingContext2D, time: number) {
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        
+        // Dibujar onda sinusoidal
+        for (let x = 0; x < dimensions.width; x += 5) {
+          const y = this.y + Math.sin((x * this.frequency) + this.offset) * this.amplitude;
+          
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        
         ctx.strokeStyle = this.color + this.opacity + ')';
         ctx.lineWidth = 1;
         ctx.stroke();
       }
     }
 
-    // Clase para representar partículas de contenido
-    class ContentParticle {
-      x: number;
-      y: number;
-      size: number;
-      speedX: number;
-      speedY: number;
-      life: number;
-      maxLife: number;
-      color: string;
-      shape: 'circle' | 'square' | 'triangle';
-
-      constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-        this.size = Math.random() * 3 + 1;
-        this.speedX = (Math.random() - 0.5) * 2;
-        this.speedY = (Math.random() - 0.5) * 2;
-        this.life = 0;
-        this.maxLife = Math.random() * 100 + 50;
-        
-        const shapes: ('circle' | 'square' | 'triangle')[] = ['circle', 'square', 'triangle'];
-        this.shape = shapes[Math.floor(Math.random() * shapes.length)];
-        
-        this.color = 'rgba(212, 175, 55, ';
-      }
-
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        this.life++;
-        
-        // Reducir velocidad con el tiempo
-        this.speedX *= 0.98;
-        this.speedY *= 0.98;
-      }
-
-      draw(ctx: CanvasRenderingContext2D) {
-        const opacity = 1 - (this.life / this.maxLife);
-        if (opacity <= 0) return;
-        
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        
-        ctx.fillStyle = this.color + opacity + ')';
-        
-        switch(this.shape) {
-          case 'circle':
-            ctx.beginPath();
-            ctx.arc(0, 0, this.size, 0, Math.PI * 2);
-            ctx.fill();
-            break;
-            
-          case 'square':
-            ctx.fillRect(-this.size, -this.size, this.size * 2, this.size * 2);
-            break;
-            
-          case 'triangle':
-            ctx.beginPath();
-            ctx.moveTo(0, -this.size);
-            ctx.lineTo(-this.size, this.size);
-            ctx.lineTo(this.size, this.size);
-            ctx.closePath();
-            ctx.fill();
-            break;
-        }
-        
-        ctx.restore();
-      }
+    // Crear ondas
+    const waves: SubtleWave[] = [];
+    for (let i = 0; i < 8; i++) {
+      waves.push(new SubtleWave(dimensions.width, dimensions.height));
     }
-
-    // Crear elementos
-    const nodes: SocialNode[] = [];
-    const connections: Connection[] = [];
-    const waves: ContentWave[] = [];
-    const particles: ContentParticle[] = [];
-    
-    // Crear nodos
-    for (let i = 0; i < 30; i++) {
-      nodes.push(new SocialNode(dimensions.width, dimensions.height));
-    }
-    
-    // Crear conexiones
-    for (let i = 0; i < 40; i++) {
-      const nodeA = nodes[Math.floor(Math.random() * nodes.length)];
-      const nodeB = nodes[Math.floor(Math.random() * nodes.length)];
-      if (nodeA !== nodeB) {
-        connections.push(new Connection(nodeA, nodeB));
-      }
-    }
-    
-    // Función para crear ondas periódicamente
-    const createWave = () => {
-      waves.push(new ContentWave(dimensions.width, dimensions.height));
-      
-      // Crear partículas en el centro de la onda
-      const wave = waves[waves.length - 1];
-      for (let i = 0; i < 5; i++) {
-        particles.push(new ContentParticle(wave.x, wave.y));
-      }
-    };
-    
-    // Crear ondas iniciales
-    for (let i = 0; i < 3; i++) {
-      setTimeout(createWave, i * 1000);
-    }
-    
-    // Crear ondas periódicamente
-    const waveInterval = setInterval(createWave, 3000);
 
     // Función de animación
     const animate = (timestamp: number) => {
@@ -391,39 +108,9 @@ const SocialProductionBackground: React.FC = () => {
       ctx.clearRect(0, 0, dimensions.width, dimensions.height);
       
       // Dibujar ondas
-      for (let i = waves.length - 1; i >= 0; i--) {
-        const wave = waves[i];
-        wave.update();
-        wave.draw(ctx);
-        
-        // Eliminar ondas invisibles
-        if (wave.opacity <= 0 || wave.radius > wave.maxRadius) {
-          waves.splice(i, 1);
-        }
-      }
-      
-      // Dibujar partículas
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const particle = particles[i];
-        particle.update();
-        particle.draw(ctx);
-        
-        // Eliminar partículas muertas
-        if (particle.life > particle.maxLife) {
-          particles.splice(i, 1);
-        }
-      }
-      
-      // Dibujar conexiones
-      connections.forEach(connection => {
-        connection.update();
-        connection.draw(ctx);
-      });
-      
-      // Dibujar nodos
-      nodes.forEach(node => {
-        node.update(dimensions.width, dimensions.height);
-        node.draw(ctx);
+      waves.forEach(wave => {
+        wave.update(elapsedTime);
+        wave.draw(ctx, elapsedTime);
       });
       
       animationRef.current = requestAnimationFrame(animate);
@@ -433,7 +120,6 @@ const SocialProductionBackground: React.FC = () => {
 
     return () => {
       cancelAnimationFrame(animationRef.current);
-      clearInterval(waveInterval);
     };
   }, [dimensions]);
 
@@ -445,11 +131,44 @@ const SocialProductionBackground: React.FC = () => {
   );
 };
 
+// 3D Components
+const FilmReel: React.FC = () => {
+  return (
+    <group>
+      {/* Film Reel */}
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[2, 2, 0.3, 32]} />
+        <meshStandardMaterial color="#D4AF37" metalness={0.8} roughness={0.2} />
+      </mesh>
+      
+      {/* Center Hub */}
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[0.5, 0.5, 0.4, 16]} />
+        <meshStandardMaterial color="#0B0B0B" />
+      </mesh>
+      
+      {/* Film Strip */}
+      {Array.from({ length: 8 }).map((_, i) => (
+        <mesh key={i} position={[Math.cos(i * Math.PI / 4) * 1.5, 0, Math.sin(i * Math.PI / 4) * 1.5]} rotation={[0, i * Math.PI / 4, 0]}>
+          <boxGeometry args={[0.1, 0.2, 0.05]} />
+          <meshStandardMaterial color="#333" />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
 const VortexStudios: React.FC = () => {
   const [heroRef, heroInView] = useInView({ threshold: 0.3, triggerOnce: true })
   const [servicesRef, servicesInView] = useInView({ threshold: 0.2, triggerOnce: true })
   const [portfolioRef, portfolioInView] = useInView({ threshold: 0.2, triggerOnce: true })
-
+ const handleClick = () => {
+    const phoneNumber = "525613072964"; // Número en formato internacional, sin "+"
+    const message = "Hola, me gustaría obtener más información.";
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    
+    window.open(url, "_blank"); // Abre en una nueva pestaña
+  };
   const services = [
     {
       icon: Film,
@@ -514,7 +233,7 @@ const VortexStudios: React.FC = () => {
       {/* Hero Section */}
      <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black-900 to-pink-900/20" />
-        <SocialProductionBackground />
+        <SubtleWavesBackground />
         
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center relative z-10">
           <motion.div
@@ -558,21 +277,15 @@ const VortexStudios: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-gold-500 text-black-900 font-semibold rounded-xl hover:bg-gold-400 transition-all duration-300 flex items-center justify-center space-x-2"
-              >
-                <Play size={20} />
-                <span>Ver Showreel</span>
-              </motion.button>
+          
               
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-4 border-2 border-purple-500 text-purple-400 font-semibold rounded-xl hover:bg-purple-500/10 transition-all duration-300"
-              >
-                Explorar Portfolio
+           onClick={handleClick}
+           >
+               Empieza tu producción
               </motion.button>
             </div>
           </motion.div>
@@ -613,7 +326,7 @@ const VortexStudios: React.FC = () => {
 
       {/* Services Section */}
       <section ref={servicesRef} className="py-20 px-4 relative">
-        <SocialProductionBackground />
+        <SubtleWavesBackground />
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={servicesInView ? { opacity: 1, y: 0 } : {}}
@@ -709,7 +422,7 @@ const VortexStudios: React.FC = () => {
 
       {/* Portfolio Section */}
       <section ref={portfolioRef} className="py-20 px-4 relative">
-        <SocialProductionBackground />
+        <SubtleWavesBackground />
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={portfolioInView ? { opacity: 1, y: 0 } : {}}

@@ -7,6 +7,7 @@ import { useInView } from 'react-intersection-observer'
 import {Heart, Users, Globe, TreePine, GraduationCap, Home} from 'lucide-react'
 import * as THREE from 'three'
 import Navigation from '../components/Navigation'
+import { log } from 'console';
 // Componente de fondo con ondas sutiles
 const SubtleWavesBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -234,7 +235,13 @@ const CivitasHumanis: React.FC = () => {
   const [heroRef, heroInView] = useInView({ threshold: 0.3, triggerOnce: true })
   const [programsRef, programsInView] = useInView({ threshold: 0.2, triggerOnce: true })
   const [impactRef, impactInView] = useInView({ threshold: 0.2, triggerOnce: true })
-
+ const handleClick = () => {
+    const phoneNumber = "525613072964"; // Número en formato internacional, sin "+"
+    const message = "Hola, me gustaría obtener más información.";
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    
+    window.open(url, "_blank"); // Abre en una nueva pestaña
+  };
   const programs = [
     {
       icon: GraduationCap,
@@ -350,21 +357,15 @@ const CivitasHumanis: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row gap-4">
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-gold-500 text-black-900 font-semibold rounded-xl hover:bg-gold-400 transition-all duration-300 flex items-center justify-center space-x-2"
-              >
-                <Heart size={20} />
-                <span>Únete al Impacto</span>
-              </motion.button>
+  whileHover={{ scale: 1.05 }}  onClick={handleClick}
+  whileTap={{ scale: 0.95 }}
+  className="px-8 py-4 bg-gold-500 border-2 border-green-500 text-green-400 font-semibold rounded-xl hover:bg-green-500/10 transition-all duration-300 flex items-center justify-center space-x-2"
+>
+  <Heart size={20} />
+  <span>Únete al Impacto</span>
+</motion.button>
               
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 border-2 border-green-500 text-green-400 font-semibold rounded-xl hover:bg-green-500/10 transition-all duration-300"
-              >
-                Ver Proyectos
-              </motion.button>
+             
             </div>
           </motion.div>
 
@@ -506,37 +507,7 @@ const CivitasHumanis: React.FC = () => {
             ))}
           </div>
 
-          {/* Call to Action */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={impactInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="text-center mt-16"
-          >
-            <h3 className="text-2xl font-display font-bold text-white mb-4">
-              ¿Quieres ser parte del cambio?
-            </h3>
-            <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-              Únete a nuestra misión de crear un impacto social duradero. 
-              Juntos podemos transformar más comunidades y cambiar más vidas.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-400 transition-all duration-300"
-              >
-                Colaborar con Nosotros
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 border-2 border-green-500 text-green-400 font-semibold rounded-xl hover:bg-green-500/10 transition-all duration-300"
-              >
-                Conocer Más Proyectos
-              </motion.button>
-            </div>
-          </motion.div>
+
         </motion.div>
       </section>
     </motion.div>

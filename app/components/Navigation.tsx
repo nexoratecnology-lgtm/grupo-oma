@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'  // Cambiado a usePathname para Next.js 13+
 import { motion, AnimatePresence } from 'framer-motion'
 import {Menu, X, Home} from 'lucide-react'
-
+import logoicon from "../img/logonombre.png"
 const navigationItems = [
   { path: '/', label: 'Inicio', icon: Home },
   { path: '/vortex', label: 'Vortex Studios', description: 'Producción Audiovisual' },
@@ -60,29 +60,14 @@ const Navigation: React.FC = () => {
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-3 group">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`w-10 h-10 rounded-lg flex items-center justify-center font-display font-bold text-lg shadow-lg transition-all duration-300 ${
-                  isHomePage 
-                    ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-black-900 shadow-yellow-400/50' 
-                    : 'bg-gradient-to-br from-yellow-400/20 to-yellow-600/20 text-yellow-400'
-                }`}
-              >
-                GR
+         <motion.div
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  className={`w-30 h-30 rounded-lg flex items-center justify-center font-display font-bold text-lg transition-all duration-300 'bg-transparent text-transparent shadow-none'`}
+>
+                <img src={logoicon.src} alt="" width={1000} height={6000}/>
               </motion.div>
-              <div className="hidden sm:block">
-                <h1 className={`text-xl font-display font-bold transition-all duration-300 ${
-                  isHomePage ? 'text-yellow-400' : 'text-white'
-                }`}>
-                  Grupo Roma
-                </h1>
-                <p className={`text-xs -mt-1 transition-all duration-300 ${
-                  isHomePage ? 'text-yellow-300' : 'text-gray-400'
-                }`}>
-                  Innovación & Impacto
-                </p>
-              </div>
+              
             </Link>
 
             {/* Desktop Menu */}

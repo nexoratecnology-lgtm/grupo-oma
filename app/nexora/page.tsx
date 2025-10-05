@@ -7,8 +7,9 @@ import { useInView } from 'react-intersection-observer'
 import {Cpu, Code, Database, Cloud, Shield, Zap} from 'lucide-react'
 import * as THREE from 'three'
 import Navigation from '../components/Navigation'
-// Componente de fondo con ondas tecnológicas simples
-const SimpleTechWaves: React.FC = () => {
+
+// Componente de fondo con ondas sutiles adaptadas para tema tecnológico
+const SubtleTechWaves: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const animationRef = useRef<number>(0);
@@ -41,8 +42,8 @@ const SimpleTechWaves: React.FC = () => {
     canvas.width = dimensions.width;
     canvas.height = dimensions.height;
 
-    // Clase para representar una onda tecnológica simple
-    class TechWave {
+    // Clase para representar una onda sutil con estilo tecnológico
+    class SubtleTechWave {
       x: number;
       y: number;
       amplitude: number;
@@ -50,166 +51,56 @@ const SimpleTechWaves: React.FC = () => {
       speed: number;
       color: string;
       opacity: number;
-      points: number;
-      type: 'sine' | 'square' | 'triangle';
+      offset: number;
 
       constructor(width: number, height: number) {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.amplitude = Math.random() * 50 + 20;
-        this.frequency = Math.random() * 0.02 + 0.01;
-        this.speed = Math.random() * 0.02 + 0.01;
+        this.amplitude = Math.random() * 30 + 10;
+        this.frequency = Math.random() * 0.01 + 0.005;
+        this.speed = Math.random() * 0.5 + 0.2;
+        this.offset = Math.random() * Math.PI * 2;
         
-        // Colores tecnológicos
+        // Colores tecnológicos suaves
         const colors = [
           'rgba(0, 195, 255, ',  // Azul brillante
           'rgba(0, 255, 170, ',  // Verde cian
-          'rgba(212, 175, 55, ', // Dorado
-          'rgba(120, 80, 255, '  // Púrpura
+          'rgba(212, 175, 55, ', // Dorado suave
+          'rgba(120, 80, 255, '  // Púrpura suave
         ];
         this.color = colors[Math.floor(Math.random() * colors.length)];
-        
-        this.opacity = Math.random() * 0.3 + 0.1;
-        this.points = Math.floor(Math.random() * 3) + 3; // 3-5 puntos
-        
-        const types: ('sine' | 'square' | 'triangle')[] = ['sine', 'square', 'triangle'];
-        this.type = types[Math.floor(Math.random() * types.length)];
+        this.opacity = Math.random() * 0.1 + 0.05;
       }
 
       update(time: number) {
-        // Mover suavemente la onda
-        this.x += Math.sin(time * this.speed) * 0.5;
-        this.y += Math.cos(time * this.speed * 0.7) * 0.3;
-        
-        // Mantener dentro de los límites
-        if (this.x < -100) this.x = dimensions.width + 100;
-        if (this.x > dimensions.width + 100) this.x = -100;
-        if (this.y < -100) this.y = dimensions.height + 100;
-        if (this.y > dimensions.height + 100) this.y = -100;
+        this.offset += this.speed * 0.01;
       }
 
       draw(ctx: CanvasRenderingContext2D, time: number) {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        
-        // Crear gradiente
-        const gradient = ctx.createLinearGradient(-this.amplitude, 0, this.amplitude, 0);
-        gradient.addColorStop(0, this.color + '0)');
-        gradient.addColorStop(0.5, this.color + (this.opacity * 0.8) + ')');
-        gradient.addColorStop(1, this.color + '0)');
-        
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        
-        // Dibujar onda según el tipo
         ctx.beginPath();
-        for (let i = 0; i <= this.points; i++) {
-          const x = (i / this.points) * this.amplitude * 2 - this.amplitude;
-          let y;
+        
+        // Dibujar onda sinusoidal
+        for (let x = 0; x < dimensions.width; x += 5) {
+          const y = this.y + Math.sin((x * this.frequency) + this.offset) * this.amplitude;
           
-          switch(this.type) {
-            case 'sine':
-              y = Math.sin((i / this.points) * Math.PI * 2 + time * this.speed * 10) * this.amplitude * 0.3;
-              break;
-            case 'square':
-              y = Math.sin((i / this.points) * Math.PI * 2 + time * this.speed * 10) > 0 ? this.amplitude * 0.3 : -this.amplitude * 0.3;
-              break;
-            case 'triangle':
-              y = (2 / Math.PI) * Math.asin(Math.sin((i / this.points) * Math.PI * 2 + time * this.speed * 10)) * this.amplitude * 0.3;
-              break;
-          }
-          
-          if (i === 0) {
+          if (x === 0) {
             ctx.moveTo(x, y);
           } else {
             ctx.lineTo(x, y);
           }
         }
-        ctx.stroke();
         
-        // Dibujar puntos en los extremos
-        for (let i = 0; i <= this.points; i += this.points) {
-          const x = (i / this.points) * this.amplitude * 2 - this.amplitude;
-          const y = Math.sin((i / this.points) * Math.PI * 2 + time * this.speed * 10) * this.amplitude * 0.3;
-          
-          ctx.beginPath();
-          ctx.arc(x, y, 3, 0, Math.PI * 2);
-          ctx.fillStyle = this.color + this.opacity + ')';
-          ctx.fill();
-        }
-        
-        ctx.restore();
-      }
-    }
-
-    // Clase para representar un anillo de energía
-    class EnergyRing {
-      x: number;
-      y: number;
-      radius: number;
-      maxRadius: number;
-      speed: number;
-      color: string;
-      opacity: number;
-      thickness: number;
-
-      constructor(width: number, height: number) {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.radius = 0;
-        this.maxRadius = Math.random() * 150 + 50;
-        this.speed = Math.random() * 1 + 0.5;
-        this.opacity = Math.random() * 0.4 + 0.2;
-        this.thickness = Math.random() * 2 + 1;
-        
-        const colors = [
-          'rgba(0, 195, 255, ',
-          'rgba(0, 255, 170, ',
-          'rgba(212, 175, 55, ',
-        ];
-        this.color = colors[Math.floor(Math.random() * colors.length)];
-      }
-
-      update() {
-        this.radius += this.speed;
-        this.opacity -= 0.002;
-      }
-
-      draw(ctx: CanvasRenderingContext2D) {
-        if (this.opacity <= 0 || this.radius > this.maxRadius) return;
-        
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.strokeStyle = this.color + this.opacity + ')';
-        ctx.lineWidth = this.thickness;
+        ctx.lineWidth = 1;
         ctx.stroke();
       }
     }
 
-    // Crear elementos
-    const waves: TechWave[] = [];
-    const rings: EnergyRing[] = [];
-    
     // Crear ondas
+    const waves: SubtleTechWave[] = [];
     for (let i = 0; i < 8; i++) {
-      waves.push(new TechWave(dimensions.width, dimensions.height));
+      waves.push(new SubtleTechWave(dimensions.width, dimensions.height));
     }
-    
-    // Crear anillos
-    for (let i = 0; i < 5; i++) {
-      rings.push(new EnergyRing(dimensions.width, dimensions.height));
-    }
-    
-    // Función para crear nuevos anillos periódicamente
-    const createRing = () => {
-      if (rings.length < 8) {
-        rings.push(new EnergyRing(dimensions.width, dimensions.height));
-      }
-    };
-    
-    // Crear anillos periódicamente
-    const ringInterval = setInterval(createRing, 2000);
 
     // Función de animación
     const animate = (timestamp: number) => {
@@ -217,18 +108,6 @@ const SimpleTechWaves: React.FC = () => {
       const elapsedTime = (timestamp - timeRef.current) / 1000;
       
       ctx.clearRect(0, 0, dimensions.width, dimensions.height);
-      
-      // Dibujar anillos
-      for (let i = rings.length - 1; i >= 0; i--) {
-        const ring = rings[i];
-        ring.update();
-        ring.draw(ctx);
-        
-        // Eliminar anillos invisibles
-        if (ring.opacity <= 0 || ring.radius > ring.maxRadius) {
-          rings.splice(i, 1);
-        }
-      }
       
       // Dibujar ondas
       waves.forEach(wave => {
@@ -243,7 +122,6 @@ const SimpleTechWaves: React.FC = () => {
 
     return () => {
       cancelAnimationFrame(animationRef.current);
-      clearInterval(ringInterval);
     };
   }, [dimensions]);
 
@@ -319,7 +197,13 @@ const Nexora: React.FC = () => {
   const [heroRef, heroInView] = useInView({ threshold: 0.3, triggerOnce: true })
   const [solutionsRef, solutionsInView] = useInView({ threshold: 0.2, triggerOnce: true })
   const [techRef, techInView] = useInView({ threshold: 0.2, triggerOnce: true })
-
+ const handleClick = () => {
+    const phoneNumber = "525533465069"; // Número en formato internacional, sin "+"
+    const message = "Hola, me gustaría obtener más información.";
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    
+    window.open(url, "_blank"); // Abre en una nueva pestaña
+  };
   const solutions = [
     {
       icon: Cloud,
@@ -386,7 +270,7 @@ const Nexora: React.FC = () => {
       {/* Hero Section */}
       <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-black-900 to-cyan-900/20" />
-        <SimpleTechWaves />
+        <SubtleTechWaves />
         
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center relative z-10">
           <motion.div
@@ -433,19 +317,13 @@ const Nexora: React.FC = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-gold-500 text-black-900 font-semibold rounded-xl hover:bg-gold-400 transition-all duration-300 flex items-center justify-center space-x-2"
+                className="px-8 py-4 bg-gold-500 border-2  border-blue-500 text-blue-400 font-semibold rounded-xl hover:bg-blue-500/10  transition-all duration-300 flex items-center justify-center space-x-2"
+              onClick={handleClick}
               >
                 <Zap size={20} />
                 <span>Consulta Tecnológica</span>
               </motion.button>
               
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 border-2 border-blue-500 text-blue-400 font-semibold rounded-xl hover:bg-blue-500/10 transition-all duration-300"
-              >
-                Ver Casos de Éxito
-              </motion.button>
             </div>
           </motion.div>
 
@@ -485,7 +363,7 @@ const Nexora: React.FC = () => {
 
       {/* Solutions Section */}
       <section ref={solutionsRef} className="py-20 px-4 relative">
-        <SimpleTechWaves />
+        <SubtleTechWaves />
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={solutionsInView ? { opacity: 1, y: 0 } : {}}
